@@ -1,0 +1,25 @@
+{
+  "name": "@uon/jwt",
+  "version": "0.4.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uon-team/jwt.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Gabriel Roy",
+    "email": "gab@uon.io",
+    "url": "https://uon.io"
+  },
+  "keywords": [
+    "jwt",
+    "typescript"
+  ],
+  "devDependencies": {
+    "@types/node": "^10.12.11"
+  }
+}
