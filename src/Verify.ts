@@ -2,6 +2,10 @@
 
 export interface VerifyOptions {
 
+    /**
+     * Verify signature
+     */
+    sig?: boolean;
 
     /**
      * Force an algorithm to be used for verification.
@@ -41,17 +45,42 @@ export interface VerifyOptions {
      */
     sub?: string | number
 
+    /**
+     * Verify the audience field
+     */
+    aud?: string | number;
+
 
 }
 
 
 export interface VerifyResult {
 
-    sig: boolean;
+    sig?: boolean;
     iat?: boolean;
     nbf?: boolean;
     exp?: boolean;
     jti?: boolean;
     iss?: boolean;
     sub?: boolean;
+    aud?: boolean;
+}
+
+export function IsVerifyValid(opts: VerifyOptions, result: VerifyResult) {
+
+    const keys = Object.keys(opts);
+    if(opts.sig === undefined) {
+        keys.push('sig');
+    }
+
+    let as_any = result as any;
+    for(let i = 0, l = keys.length; i < l; ++i) {
+
+        if(as_any[keys[i]] !== true) {
+            return false;
+        }
+    }
+
+    return true;
+
 }

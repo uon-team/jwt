@@ -1,18 +1,17 @@
 import { JwtHeader } from "./Header";
 import { JwtPayload } from "./Payload";
 import { JwtToken } from "./Token";
-import { VerifyOptions, VerifyResult } from "./Verify";
+import { VerifyOptions, VerifyResult, IsVerifyValid } from "./Verify";
 
 import { IsValidAlgorithm, ALGORITHMS, Algorithms } from "./Algorithm";
 import { UrlEncodedToBase64, JsonBase64Decode, Base64ToUrlEncoded, JsonBase64Encode } from "./Utils";
 
-import * as fs from "fs";
-
-const EMPTY_OBJECT = {};
+// default verify options, empty object
+const DEFAULT_VERIFY_OPTIONS = {};
 
 
 // re-export
-export { JwtHeader, JwtPayload, JwtToken, VerifyOptions, VerifyResult };
+export { JwtHeader, JwtPayload, JwtToken, VerifyOptions, VerifyResult, IsVerifyValid };
 
 /**
  * Encode a token
@@ -80,7 +79,7 @@ export function Decode(token: string): JwtToken {
  * @param key 
  * @param opts 
  */
-export function Verify(token: string, key: string | Buffer, opts: VerifyOptions = EMPTY_OBJECT): VerifyResult {
+export function Verify(token: string, key: string | Buffer, opts: VerifyOptions = DEFAULT_VERIFY_OPTIONS): VerifyResult {
 
     // decode token for access to its payload and header
     const decoded = Decode(token);
@@ -92,8 +91,11 @@ export function Verify(token: string, key: string | Buffer, opts: VerifyOptions 
 
     const verifier = Algorithms[alg];
 
-    const result: VerifyResult = {
-        sig: verifier.verify(`${parts[0]}.${parts[1]}`, UrlEncodedToBase64(parts[2]), key)
+    const result: VerifyResult = {};
+
+    // verify signature
+    if(opts.sig === undefined || opts.sig === true) {
+        result.sig = verifier.verify(`${parts[0]}.${parts[1]}`, UrlEncodedToBase64(parts[2]), key);
     }
 
     // verify expiration
@@ -126,27 +128,11 @@ export function Verify(token: string, key: string | Buffer, opts: VerifyOptions 
         result.sub = payload.sub === opts.sub
     }
 
+    // verify audience
+    if (opts.aud !== undefined) {
+        result.aud = payload.aud === opts.aud
+    }
+
     return result;
 }
 
-
-
-
-let priv = fs.readFileSync('/home/gab/test.pem');
-let pub = fs.readFileSync('/home/gab/test.pem.pub');
-
-
-let now = Date.now();
-
-let token = Encode({
-    hello: 'world',
-    iat: now,
-    exp: now + 3000
-}, priv, 'RS512');
-
-
-setTimeout(() => {
-
-    console.log(token, Decode(token), Verify(token, pub, { alg: 'RS512' }));
-
-}, 2000);
