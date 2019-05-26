@@ -1,12 +1,14 @@
 # JWT
 
+A simple library to encode, decode and verify JWTs.
+
+NOTE: No browser support yet. Works on node.js apps only because of 'crypto' and Buffer dependencies.
 
 ## Installation
 
 ```shell
     npm i @uon/jwt
 ```
-
 
 
 ## Usage
@@ -36,5 +38,4 @@ const token: JwtToken = Decode(token_str);
 ```
 
 ## Limitations
- - No implementation for elliptic curve algorithms (ES256, ES384, ES512)
- - No support for payload encryption
+ - No support for payload encryption yet

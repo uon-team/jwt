@@ -1,3 +1,4 @@
+import { JwtToken } from "./Token";
 
 
 export interface VerifyOptions {
@@ -64,6 +65,9 @@ export interface VerifyResult {
     iss?: boolean;
     sub?: boolean;
     aud?: boolean;
+    alg?: boolean;
+    
+    decoded: JwtToken;
 }
 
 export function IsVerifyValid(opts: VerifyOptions, result: VerifyResult) {
@@ -72,6 +76,8 @@ export function IsVerifyValid(opts: VerifyOptions, result: VerifyResult) {
     if(opts.sig === undefined) {
         keys.push('sig');
     }
+
+    
 
     let as_any = result as any;
     for(let i = 0, l = keys.length; i < l; ++i) {

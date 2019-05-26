@@ -1,6 +1,6 @@
 
 import * as crypto from 'crypto';
-
+import { derToJose, joseToDer } from 'ecdsa-sig-formatter';
 
 export const ALGORITHMS = [
     'HS256',
@@ -9,9 +9,9 @@ export const ALGORITHMS = [
     'RS256',
     'RS384',
     'RS512',
-    /*'ES256',
+    'ES256',
     'ES384',
-    'ES512'*/
+    'ES512'
 ];
 
 export function IsValidAlgorithm(alg: string) {
@@ -31,6 +31,9 @@ export const Algorithms: { [k: string]: IAlgorithm } = {
     RS256: CreateRsaAlg(256),
     RS384: CreateRsaAlg(384),
     RS512: CreateRsaAlg(512),
+    ES256: CreateEcDsaAlg(256),
+    ES384: CreateEcDsaAlg(384),
+    ES512: CreateEcDsaAlg(512)
 }
 
 function CreateHmacAlg(bits: number): IAlgorithm {
@@ -57,19 +60,44 @@ function CreateHmacAlg(bits: number): IAlgorithm {
 
 function CreateRsaAlg(bits: number): IAlgorithm {
 
-    const sign = function sign(encoded: string, secret: string | Buffer): string {
+    const sign = function sign(encoded: string, privateKey: string | Buffer): string {
 
-        const sig = crypto.createSign('SHA' + bits)
+        const sig = crypto.createSign('RSA-SHA' + bits)
             .update(encoded)
-            .sign(secret.toString(), 'base64');
+            .sign(privateKey.toString(), 'base64');
         return sig;
     };
 
-    const verify = function verify(encoded: string, signature: string, secret: string | Buffer): boolean {
+    const verify = function verify(encoded: string, signature: string, publicKey: string | Buffer): boolean {
 
         const verifier = crypto.createVerify('RSA-SHA' + bits);
         verifier.update(encoded);
-        return verifier.verify(secret, signature, 'base64');
+        return verifier.verify(publicKey, signature, 'base64');
+    }
+
+    return { sign, verify };
+
+}
+
+function CreateEcDsaAlg(bits: number) {
+
+
+    const sign = function sign(encoded: string, privateKey: string | Buffer): string {
+
+        const sig = crypto.createSign('RSA-SHA' + bits)
+            .update(encoded)
+            .sign({ key: privateKey.toString()}, 'base64');
+        return derToJose(sig, 'ES' + bits);
+    };
+
+    const verify = function verify(encoded: string, signature: string, publicKey: string | Buffer): boolean {
+
+        signature = joseToDer(signature, 'ES' + bits).toString('base64');
+
+        const verifier = crypto.createVerify('RSA-SHA' + bits);
+        verifier.update(encoded);
+
+        return verifier.verify(publicKey, signature, 'base64');
     }
 
     return { sign, verify };

@@ -13,7 +13,7 @@ export interface JwtPayload {
     iat?: number;
 
     /**
-     * No before, not valid before date
+     * Not valid before date
      */
     nbf?: number;
 
@@ -33,7 +33,12 @@ export interface JwtPayload {
     iss?: string;
 
     /**
-     * Any othe value
+     * The audience, 
+     */
+    aud?: string;
+
+    /**
+     * Any other value
      */
     [k: string]: any;
 }

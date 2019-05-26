@@ -19,15 +19,17 @@ export { JwtHeader, JwtPayload, JwtToken, VerifyOptions, VerifyResult, IsVerifyV
  * @param key 
  * @param alg 
  */
-export function Encode(payload: JwtPayload, key: string | Buffer, alg: string): string {
+export function Encode(payload: JwtPayload, key: string | Buffer, alg: string, _header?: { [k: string]: string | number }): string {
 
     // check provided algo against algo list
     if (!IsValidAlgorithm(alg)) {
         throw new Error(`Invalid algorithm, got ${alg}, must be one of ${ALGORITHMS}`);
     }
 
+    const header = Object.assign({}, _header, { alg, typ: 'JWT' });
+
     // encode header in url-encoded base64
-    const header_b64 = JsonBase64Encode({ alg, typ: 'JWT' });
+    const header_b64 = JsonBase64Encode(header);
 
     // encode payload in the same fashion
     const payload_b64 = JsonBase64Encode(payload);
@@ -91,10 +93,15 @@ export function Verify(token: string, key: string | Buffer, opts: VerifyOptions 
 
     const verifier = Algorithms[alg];
 
-    const result: VerifyResult = {};
+    const result: VerifyResult = { decoded };
+
+
+    if (opts.alg !== undefined && opts.alg === decoded.header.alg) {
+        result.alg = true;
+    }
 
     // verify signature
-    if(opts.sig === undefined || opts.sig === true) {
+    if (opts.sig === undefined || opts.sig === true) {
         result.sig = verifier.verify(`${parts[0]}.${parts[1]}`, UrlEncodedToBase64(parts[2]), key);
     }
 
