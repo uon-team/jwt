@@ -39,7 +39,6 @@ export const Algorithms: { [k: string]: IAlgorithm } = {
 function CreateHmacAlg(bits: number): IAlgorithm {
 
     const sign = function sign(encoded: string, secret: string | Buffer): string {
-
         const sig = crypto.createHmac('sha' + bits, secret)
             .update(encoded)
             .digest('base64');
