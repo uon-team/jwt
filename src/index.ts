@@ -1,17 +1,15 @@
-import { JwtHeader } from "./Header";
-import { JwtPayload } from "./Payload";
-import { JwtToken } from "./Token";
-import { VerifyOptions, VerifyResult, IsVerifyValid } from "./Verify";
+import { JwtHeader } from "./interfaces/header.interface";
+import { JwtPayload } from "./interfaces/payload.interface";
+import { JwtToken } from "./interfaces/token.interface";
+import { VerifyOptions, VerifyResult } from "./interfaces/verify.interface";
 
-import { IsValidAlgorithm, ALGORITHMS, Algorithms } from "./Algorithm";
-import { UrlEncodedToBase64, JsonBase64Decode, Base64ToUrlEncoded, JsonBase64Encode } from "./Utils";
-
-// default verify options, empty object
-const DEFAULT_VERIFY_OPTIONS = {};
+import { IsValidAlgorithm, ALGORITHM_TYPES, ALGORITHMS } from "./algorithm/Algorithm";
+import { UrlEncodedToBase64, JsonBase64Decode, Base64ToUrlEncoded, JsonBase64Encode } from "./utils/base64.utils";
 
 
 // re-export
-export { JwtHeader, JwtPayload, JwtToken, VerifyOptions, VerifyResult, IsVerifyValid };
+export { JwtHeader, JwtPayload, JwtToken, VerifyOptions, VerifyResult };
+
 
 /**
  * Encode a token
@@ -23,7 +21,7 @@ export function Encode(payload: JwtPayload, key: string | Buffer, alg: string, _
 
     // check provided algo against algo list
     if (!IsValidAlgorithm(alg)) {
-        throw new Error(`Invalid algorithm, got ${alg}, must be one of ${ALGORITHMS}`);
+        throw new Error(`Invalid algorithm, got ${alg}, must be one of ${ALGORITHM_TYPES}`);
     }
 
     const header = Object.assign({}, _header, { alg, typ: 'JWT' });
@@ -38,7 +36,7 @@ export function Encode(payload: JwtPayload, key: string | Buffer, alg: string, _
     const unsigned = `${header_b64}.${payload_b64}`;
 
     // grab the sign/verify functions
-    const signer = Algorithms[alg];
+    const signer = ALGORITHMS[alg];
 
     // create a signature and url-encode it
     const sig = Base64ToUrlEncoded(signer.sign(unsigned, key));
@@ -91,7 +89,7 @@ export function Verify(token: string, key: string | Buffer, opts: VerifyOptions 
     const alg = opts.alg || decoded.header.alg;
     const now = Date.now();
 
-    const verifier = Algorithms[alg];
+    const verifier = ALGORITHMS[alg];
 
     const result: VerifyResult = { decoded };
 
@@ -143,3 +141,30 @@ export function Verify(token: string, key: string | Buffer, opts: VerifyOptions 
     return result;
 }
 
+
+/**
+ * Validate the Verify result against a checklist
+ * @param opts 
+ * @param result 
+ */
+export function IsVerifyValid(opts: VerifyOptions, result: VerifyResult) {
+
+    const keys = Object.keys(opts);
+    if(opts.sig === undefined) {
+        keys.push('sig');
+    }
+
+    let as_any = result as any;
+    for(let i = 0, l = keys.length; i < l; ++i) {
+
+        if(as_any[keys[i]] !== true) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
+// default verify options, empty object
+const DEFAULT_VERIFY_OPTIONS = {};

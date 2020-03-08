@@ -1,5 +1,5 @@
-import { JwtHeader } from "./Header";
-import { JwtPayload } from "./Payload";
+import { JwtHeader } from "./header.interface";
+import { JwtPayload } from "./payload.interface";
 
 
 export interface JwtToken {

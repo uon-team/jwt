@@ -1,4 +1,4 @@
-import { JwtToken } from "./Token";
+import { JwtToken } from "./token.interface";
 
 
 export interface VerifyOptions {
@@ -14,7 +14,6 @@ export interface VerifyOptions {
      * It is strongly recommended that you use this to prevent verification attacks
      */
     alg?: string;
-
 
     /**
      * Verify that the "issued at" date is equal to this one
@@ -68,25 +67,4 @@ export interface VerifyResult {
     alg?: boolean;
     
     decoded: JwtToken;
-}
-
-export function IsVerifyValid(opts: VerifyOptions, result: VerifyResult) {
-
-    const keys = Object.keys(opts);
-    if(opts.sig === undefined) {
-        keys.push('sig');
-    }
-
-    
-
-    let as_any = result as any;
-    for(let i = 0, l = keys.length; i < l; ++i) {
-
-        if(as_any[keys[i]] !== true) {
-            return false;
-        }
-    }
-
-    return true;
-
 }

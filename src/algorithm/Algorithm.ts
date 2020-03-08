@@ -2,7 +2,7 @@
 import * as crypto from 'crypto';
 import { derToJose, joseToDer } from 'ecdsa-sig-formatter';
 
-export const ALGORITHMS = [
+export const ALGORITHM_TYPES = [
     'HS256',
     'HS384',
     'HS512',
@@ -15,7 +15,7 @@ export const ALGORITHMS = [
 ];
 
 export function IsValidAlgorithm(alg: string) {
-    return ALGORITHMS.indexOf(alg) > -1;
+    return ALGORITHM_TYPES.indexOf(alg) > -1;
 }
 
 export interface IAlgorithm {
@@ -23,7 +23,7 @@ export interface IAlgorithm {
     verify(encoded: string, signature: string, secret: string | Buffer): boolean;
 }
 
-export const Algorithms: { [k: string]: IAlgorithm } = {
+export const ALGORITHMS: { [k: string]: IAlgorithm } = {
 
     HS256: CreateHmacAlg(256),
     HS384: CreateHmacAlg(384),
@@ -35,6 +35,8 @@ export const Algorithms: { [k: string]: IAlgorithm } = {
     ES384: CreateEcDsaAlg(384),
     ES512: CreateEcDsaAlg(512)
 }
+
+
 
 function CreateHmacAlg(bits: number): IAlgorithm {
 
