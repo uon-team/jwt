@@ -3,7 +3,7 @@ import { JwtPayload } from "./interfaces/payload.interface";
 import { JwtToken } from "./interfaces/token.interface";
 import { VerifyOptions, VerifyResult } from "./interfaces/verify.interface";
 
-import { IsValidAlgorithm, ALGORITHM_TYPES, ALGORITHMS } from "./algorithm/Algorithm";
+import { IsValidAlgorithm, ALGORITHM_TYPES, ALGORITHMS } from "./algorithm/algorithm";
 import { UrlEncodedToBase64, JsonBase64Decode, Base64ToUrlEncoded, JsonBase64Encode } from "./utils/base64.utils";
 
 
