@@ -1,6 +1,6 @@
 {
   "name": "@uon/jwt",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "description": "A library for encoding, decoding, and verifying JWTs",
   "main": "./dist/index.js",
   "scripts": {},
