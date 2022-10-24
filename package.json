@@ -1,6 +1,6 @@
 {
   "name": "@uon/jwt",
-  "version": "0.9.2",
+  "version": "0.11.0",
   "description": "A library for encoding, decoding, and verifying JWTs",
   "main": "./dist/index.js",
   "scripts": {},
@@ -19,9 +19,9 @@
     "typescript"
   ],
   "devDependencies": {
-    "@types/node": "^10.17.5"
+    "@types/node": "^16.11.12"
   },
   "dependencies": {
-    "ecdsa-sig-formatter": "^1.0.11"
+    "ecdsa-sig-formatter": "=1.0.11"
   }
 }

@@ -52,6 +52,8 @@ export function Encode(payload: JwtPayload, key: string | Buffer, alg: string, _
  */
 export function Decode(token: string): JwtToken {
 
+
+
     // split token in its parts
     const parts = token.split('.');
 
@@ -79,10 +81,10 @@ export function Decode(token: string): JwtToken {
  * @param key 
  * @param opts 
  */
-export function Verify(token: string, key: string | Buffer, opts: VerifyOptions = DEFAULT_VERIFY_OPTIONS): VerifyResult {
+export function Verify(token: string, key: string | Buffer, opts: VerifyOptions = DEFAULT_VERIFY_OPTIONS, predecoded?: JwtToken): VerifyResult {
 
     // decode token for access to its payload and header
-    const decoded = Decode(token);
+    const decoded = predecoded || Decode(token);
     const payload = decoded.payload
     const parts = token.split('.');
 
@@ -150,14 +152,14 @@ export function Verify(token: string, key: string | Buffer, opts: VerifyOptions 
 export function IsVerifyValid(opts: VerifyOptions, result: VerifyResult) {
 
     const keys = Object.keys(opts);
-    if(opts.sig === undefined) {
+    if (opts.sig === undefined) {
         keys.push('sig');
     }
 
     let as_any = result as any;
-    for(let i = 0, l = keys.length; i < l; ++i) {
+    for (let i = 0, l = keys.length; i < l; ++i) {
 
-        if(as_any[keys[i]] !== true) {
+        if (as_any[keys[i]] !== true) {
             return false;
         }
     }
